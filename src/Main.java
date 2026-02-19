@@ -9,17 +9,24 @@ public class Main {
 
     public static void hasTransmissionError(byte[] transmit, byte[] receive) {
 
-        StringBuilder binaryString = new StringBuilder(transmit.length);
+        StringBuilder binaryStringTransmit = new StringBuilder(transmit.length);
+        StringBuilder binaryStringReceive = new StringBuilder(receive.length);
         StringBuilder powerString = new StringBuilder(transmit.length);
+        StringBuilder kCheckValueTransmit = new StringBuilder();
+        StringBuilder kCheckValueReceive = new StringBuilder();
 
         for (byte b : transmit) {
-            binaryString.append((char) b - 48);
+            binaryStringTransmit.append((char) b - 48);
+        }
+
+        for (byte b : receive) {
+            binaryStringReceive.append((char) b - 48);
         }
 
 
 
 
-        System.out.println("Transmitted File content: " + binaryString.toString());
+        System.out.println("Transmitted File content: " + binaryStringTransmit);
         System.out.println("Total number of bytes read: " + transmit.length);
 
         System.out.println("\n");
@@ -41,15 +48,61 @@ public class Main {
         System.out.println(N);
         System.out.println(k);
 
+
+
+
         for (int i = 0; i < k; i++) {
             double power = Math.pow(2, i) - 1;
-
+            kCheckValueTransmit.append((char) transmit[transmit.length - 1 - i] -48);
+            kCheckValueTransmit.append(" ");
             powerString.append((int)power);
             powerString.append(" ");
         }
 
 
+
         System.out.println("The location of the k check bits are: " + powerString);
+
+        System.out.println("The k check bit values are: " + kCheckValueTransmit);
+
+
+        System.out.println("\n");
+        System.out.println("Received file content: " + binaryStringReceive);
+        System.out.println("Total number of bytes read: " + receive.length);
+
+
+        if (transmit.length != receive.length) {
+            System.out.println("Files are not the same size!");
+            return;
+        }
+
+
+        for (int i = 0; i < k; i++) {
+            kCheckValueReceive.append((char) receive[receive.length - 1 - i] -48);
+            kCheckValueReceive.append(" ");
+
+        }
+
+
+
+        System.out.println("The location of the k check bits are: " + powerString);
+        System.out.println("The k check bit values are: " + kCheckValueReceive);
+
+        String transmitTrim = kCheckValueTransmit.toString().trim();
+        System.out.println("Transmitted file content: " + transmitTrim);
+        int transmitBinary = Integer.parseInt(transmitTrim, 2);
+        int receiveBinary = Integer.parseInt(kCheckValueReceive.toString().trim(), 2);
+
+
+        String syndromeWord = Integer.toBinaryString(transmitBinary ^ receiveBinary);
+
+
+        System.out.println("The syndrome word is: " + syndromeWord);
+
+
+
+
+
 
     }
 
